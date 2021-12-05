@@ -22,9 +22,9 @@ function parseData(data) {
     return [boards, drawn];
 }
 
-function play(boards, drawn) {
-    let boardStates = [];
+function playSparse(boards, drawn) {
     let winningBoards = [];
+    let marked = [];
     // for all drawn numbers
     for (var x = 0; x < drawn.length; x++) {
         let num = drawn[x];
@@ -34,53 +34,32 @@ function play(boards, drawn) {
                 console.log('board', y, 'has already won before, skipping');
             }
             let board = boards[y];
-            let marked = [];
-            if (!boardStates[y]) {
-                boardStates[y] = [];
+            if (!marked[y]) {
+                marked[y] = [];
             }
             board.map((row, rowIdx) => {
                 row.map((boardNumber, numIdx) => {
                     if (boardNumber === num) {
-                        // init boardState
-                        if (!boardStates[y][rowIdx]) {
-                            boardStates[y][rowIdx] = [];
-                        }
-                        boardStates[y][rowIdx][numIdx] = true;
-                        //console.log('marked board', y, 'row', rowIdx, 'column', numIdx, 'number', boardNumber);
-                        marked.push([rowIdx, numIdx]);
+                        marked[y].push([rowIdx, numIdx]);
                     }
                 });
             });
-            // check to see if we won after marking this board
-            for (var m = 0; m < marked.length; m++) {
-                let [rowIdx, numIdx] = marked[m];
-                // check to see if all rows have been marked
-                if (boardStates[y][rowIdx].filter(x => x).length === 5) { // we have 5 numbers in a row marked
-                    console.log('we have a full row match on board', y, 'with number', num, 'and row', rowIdx);
-                    console.log('marking board', y, 'as a winner');
+            for (var m = 0; m < marked[y].length; m++) {
+                let [rowIdx, numIdx] = marked[y][m];
+                // check to see if we won after marking this board
+                if (marked[y].filter(x => x[0] === rowIdx).length === 5) {
                     winningBoards[y] = true;
                     if (winningBoards.filter(x => x).length === boards.length) {
                         console.log('board', y, 'is our last winner, returning board state');
-                        return [boardStates[y], board, num];
+                        return [marked[y], board, num];
                     }
                 }
-                // check to see if an entire column has been marked
-                let checkedRow = 0; 
-                for (var row = 0; row < 5; row++) {
-                    if (!boardStates[y][row]) {
-                        continue;
-                    }
-                    if (boardStates[y][row][numIdx]) {
-                        checkedRow++;
-                    }
-                }
-                if (checkedRow === 5) {
-                    console.log('we have a full col match on board', y, 'with number', num, 'and col', numIdx);
-                    console.log('marking board', y, 'as a winner');
+
+                if (marked[y].filter(x => x[1] === numIdx).length === 5) {
                     winningBoards[y] = true;
                     if (winningBoards.filter(x => x).length === boards.length) {
                         console.log('board', y, 'is our last winner, returning board state');
-                        return [boardStates[y], board, num];
+                        return [marked[y], board, num];
                     }
                 }
             }
@@ -91,13 +70,17 @@ function play(boards, drawn) {
 
 [boards, drawn] = parseData(data);
 
-let [marks, board, winningNumber] = play(boards, drawn);
+//let [marks, board, winningNumber] = play(boards, drawn);
+let [marks, board, winningNumber] = playSparse(boards, drawn);
 
+console.log(marks);
 let total = 0;
 board.map((row, rIdx) => {
     row.map((num, cIdx) => {
-        if (!marks[rIdx][cIdx]) {
+        if (!marks.find(x => x[0] === rIdx && x[1] === cIdx)) {
             total += board[rIdx][cIdx];
+        } else {
+            console.log('found mark', [rIdx, cIdx]);
         }
     });
 });
