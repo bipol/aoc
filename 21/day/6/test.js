@@ -10,7 +10,7 @@ let simulation = [];
 
 seed.map(x => {
     if (simulation[parseInt(x)]) {
-        simulation[x]++
+        simulation[x]++;
     } else {
         simulation[parseInt(x)] = 1;
     }
@@ -38,4 +38,3 @@ function runSimArray(arr, days) {
 }
 
 console.log(runSimArray(simulation, 256).reduce((x, y) => x + y));
-
