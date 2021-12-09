@@ -88,25 +88,20 @@ func main() {
 			case 2:
 				key[signal] = 1
 				numToSignal[1] = signal
-				break
 			case 3:
 				key[signal] = 7
 				numToSignal[7] = signal
-				break
 			case 4:
 				key[signal] = 4
 				numToSignal[4] = signal
-				break
 			case 7:
 				key[signal] = 8
 				numToSignal[8] = signal
-				break
 			default:
 				for _, y := range numSize[len(signal)] {
 					idx, _ := strconv.Atoi(y)
 					possibleNumbers[idx] = append(possibleNumbers[idx], signal)
 				}
-				break
 			}
 		}
 
