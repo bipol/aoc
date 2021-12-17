@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	dat, err := os.ReadFile("./test.txt")
+	dat, err := os.ReadFile("./puzzle.txt")
 
 	if err != nil {
 		log.Fatal(err)
@@ -32,19 +32,30 @@ func main() {
 	elementCount := make(map[string]int)
 	for _, k := range template {
 		elementCount[string(k)]++
-
 	}
-	for x := 1; x <= 10; x++ {
-		new := []rune{template[0]}
-		for y := 1; y < len(template); y++ {
-			pair := fmt.Sprintf("%s%s", string(template[y-1]), string(template[y]))
-			rule := rules[pair]
-			elementCount[string(rule)]++
-			new = append(new, rule)
-			new = append(new, template[y])
+
+	//AB
+	//ACB
+	// AC CB
+	pairs := make(map[string]int)
+	//create original template pairs
+	for y := 1; y < len(template); y++ {
+		pair := fmt.Sprintf("%s%s", string(template[y-1]), string(template[y]))
+		pairs[pair]++
+	}
+
+	for x := 1; x <= 40; x++ {
+		fmt.Println(x)
+		newPairs := make(map[string]int)
+		for k, v := range pairs {
+			rule := rules[k]
+			newPair := fmt.Sprintf("%s%s", string(k[0]), string(rule))
+			newPair2 := fmt.Sprintf("%s%s", string(rule), string(k[1]))
+			elementCount[string(rule)] += v
+			newPairs[newPair] += v
+			newPairs[newPair2] += v
 		}
-		template = new
-		fmt.Println(x, "tempate size", len(template))
+		pairs = newPairs
 	}
 
 	sorted := []int{}
