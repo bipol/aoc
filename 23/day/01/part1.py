@@ -1,5 +1,5 @@
 import re
-f = open('sample.txt')
+f = open('input.txt')
 
 total = 0
 for line in f:
